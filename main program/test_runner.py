@@ -1,5 +1,4 @@
 from action_handler import ActionHandler
-from selenium import webdriver
 import time
 
 class TestRunner:
@@ -15,5 +14,5 @@ class TestRunner:
             action_handler.perform_action(action)
         
         time.sleep(2)
-        self.driver.quit()
+        
         print("Test completed successfully.")

@@ -1,24 +1,31 @@
-{
+[
+    {
         "url": "https://hamimohajer.com/dv/register/single/no/0",
         "actions": [
             {
                 "action": "input",
                 "selector": "#first_name",
                 "value": "moein",
-                "invalid_values": ["abcdefghij", "!@#$%^&*()", "1234abcd","محمئری"]
+                "rules": {
+                    "max_length": 10,
+                    "contains_digits": false,
+                    "allowed_characters": "^[a-zA-Z]+$"
+                }
             },
             {
                 "action": "input",
                 "selector": "#last_name",
                 "value": "moein",
-                "invalid_values": ["abcdefghij", "!@#$%^&*()", "1234abcd","محمئری"]
+                "rules": {
+                    "max_length": 10,
+                    "contains_digits": false,
+                    "allowed_characters": "^[a-zA-Z]+$"
+                }
             },
             {
                 "action": "click",
-                "selector": "#brith_year > option:nth-child(6)",
-                "invalid_values": ["abcdefghij", "!@#$%^&*()", "1234abcd","محمئری"]
+                "selector": "#brith_year > option:nth-child(6)"
             }
-            
         ]
-}
-    
+    }
+]
