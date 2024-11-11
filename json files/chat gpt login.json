@@ -1,0 +1,30 @@
+{
+    "url": "https://auth.openai.com/authorize?client_id=TdJIcbe16WoTHtN95nyywh5E4yOo6ItG&scope=openid%20email%20profile%20offline_access%20model.request%20model.read%20organization.read%20organization.write&response_type=code&redirect_uri=https%3A%2F%2Fchatgpt.com%2Fapi%2Fauth%2Fcallback%2Flogin-web&audience=https%3A%2F%2Fapi.openai.com%2Fv1&device_id=49a02b02-7536-4cf2-bb83-0eafffab1925&prompt=login&screen_hint=login&ext-oai-did=49a02b02-7536-4cf2-bb83-0eafffab1925&ext-login-allow-phone=true&country_code=US&state=BXCi63I7j4gB6zPGPqsuz1ZfkuAIXamsLFaU77VmYWw&code_challenge=js2xz1bIebAEnMTsjFjUhHCvNDwZxIn0MR-hNhJrkbc&code_challenge_method=S256",
+    "actions": [
+        
+        {
+            "action": "input",
+            "selector": "#email-input",
+            "value": "whiteshad0ow005@gmail.com",
+            "invalid_values": [
+                ""
+            ]
+        },
+        {
+            "action": "click",
+            "selector": "body > div > main > section > div.login-container > button",
+            "value": "",
+            "invalid_values": [
+                ""
+            ]
+        },
+        {
+            "action": "input",
+            "selector": "#password",
+            "value": "Mm09192445052",
+            "invalid_values": [
+                ""
+            ]
+        }
+    ]
+}

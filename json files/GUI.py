@@ -11,6 +11,7 @@ def save_data():
     max_length = max_length_entry.get()
     contains_digits = contains_digits_var.get()
     allowed_characters = allowed_characters_entry.get()
+    expected_error_selector = expected_error_selector_entry.get()
 
     # ساخت دیکشنری برای قوانین (اگر وجود دارند)
     rules = {}
@@ -26,7 +27,8 @@ def save_data():
         "action": action,
         "selector": selector,
         "value": value,
-        "invalid_values": invalid_values
+        "invalid_values": invalid_values,
+        "expected_error_selector": expected_error_selector,
     }
     if rules:  # اگر قوانین موجود بود، به داده اضافه می‌شود
         data["rules"] = rules
@@ -95,34 +97,39 @@ tk.Label(root, text="Value").grid(row=3, column=0)
 value_entry = tk.Entry(root, width=30)
 value_entry.grid(row=3, column=1)
 
+# سلکتور خطای مورد انتظار
+tk.Label(root, text="Expected Error Selector").grid(row=4, column=0)
+expected_error_selector_entry = tk.Entry(root, width=30)
+expected_error_selector_entry.grid(row=4, column=1)
+
 # مقادیر نامعتبر
-tk.Label(root, text="Invalid Values (comma-separated)").grid(row=4, column=0)
+tk.Label(root, text="Invalid Values (comma-separated)").grid(row=5, column=0)
 invalid_values_entry = tk.Entry(root, width=30)
-invalid_values_entry.grid(row=4, column=1)
+invalid_values_entry.grid(row=5, column=1)
 
 # قوانین اعتبارسنجی
-tk.Label(root, text="Rules (Optional)").grid(row=5, column=0, columnspan=2)
+tk.Label(root, text="Rules (Optional)").grid(row=6, column=0, columnspan=2)
 
-tk.Label(root, text="Max Length").grid(row=6, column=0)
+tk.Label(root, text="Max Length").grid(row=7, column=0)
 max_length_entry = tk.Entry(root)
-max_length_entry.grid(row=6, column=1)
+max_length_entry.grid(row=7, column=1)
 
-tk.Label(root, text="Contains Digits").grid(row=7, column=0)
+tk.Label(root, text="Contains Digits").grid(row=8, column=0)
 contains_digits_var = tk.BooleanVar()
-tk.Checkbutton(root, variable=contains_digits_var).grid(row=7, column=1)
+tk.Checkbutton(root, variable=contains_digits_var).grid(row=8, column=1)
 
-tk.Label(root, text="Allowed Characters (Regex)").grid(row=8, column=0)
+tk.Label(root, text="Allowed Characters (Regex)").grid(row=9, column=0)
 allowed_characters_entry = tk.Entry(root)
-allowed_characters_entry.grid(row=8, column=1)
+allowed_characters_entry.grid(row=9, column=1)
 
 # دکمه‌ها
-tk.Button(root, text="Save Action", command=save_data).grid(row=9, column=0, columnspan=2)
-tk.Button(root, text="Delete Action", command=delete_action).grid(row=10, column=0, columnspan=2)
-tk.Button(root, text="Export to JSON", command=export_to_json).grid(row=11, column=0, columnspan=2)
+tk.Button(root, text="Save Action", command=save_data).grid(row=10, column=0, columnspan=2)
+tk.Button(root, text="Delete Action", command=delete_action).grid(row=11, column=0, columnspan=2)
+tk.Button(root, text="Export to JSON", command=export_to_json).grid(row=12, column=0, columnspan=2)
 
 # لیست اقدامات
-tk.Label(root, text="Actions List").grid(row=12, column=0, columnspan=2)
+tk.Label(root, text="Actions List").grid(row=13, column=0, columnspan=2)
 action_list = tk.Listbox(root, width=80, height=10)
-action_list.grid(row=13, column=0, columnspan=3)
+action_list.grid(row=14, column=0, columnspan=3)
 
 root.mainloop()
