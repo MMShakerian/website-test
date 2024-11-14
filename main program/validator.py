@@ -2,10 +2,12 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoAlertPresentException, UnexpectedAlertPresentException
 from alert_handler import AlertHandler
 import time
+from logger import Logger  # ایمپورت کلاس Logger
 
 class Validator:
     def __init__(self, driver):
         self.driver = driver
+        self.logger = Logger()  # مقداردهی Logger
 
     def test_invalid_values(self, selector, rules, expected_error_selector=None, expected_error=None):
         invalid_values = self.generate_invalid_values(rules)
@@ -15,7 +17,7 @@ class Validator:
                 element.clear()
                 element.send_keys(invalid_value)
                 time.sleep(1)
-                
+                self.logger.log(f"Testing invalid value '{invalid_value}' for field with selector '{selector}'")
                 print(f"Testing invalid value '{invalid_value}' for field with selector '{selector}'")
                 
                 self.driver.find_element(By.TAG_NAME, "body").click()
@@ -30,19 +32,24 @@ class Validator:
                 AlertHandler(self.driver).handle_alert(selector)
             except Exception as e:
                 print(f"Error testing invalid value '{invalid_value}' for selector {selector}: {e}")
+                self.logger.log(f"Error testing invalid value '{invalid_value}' for selector {selector}: {e}")
 
     def check_error_message(self, selector, error_selector, expected_error):
         try:
             error_element = self.driver.find_element(By.CSS_SELECTOR, error_selector)
             error_text = error_element.text
+            self.logger.log(f"Error message shown for selector '{selector}': {error_text}")
             print(f"Error message shown for selector '{selector}': {error_text}")
             
             if expected_error and expected_error in error_text:
+                self.logger.log(f"Field with selector '{selector}' correctly displayed expected error: '{expected_error}'")
                 print(f"Field with selector '{selector}' correctly displayed expected error: '{expected_error}'")
             else:
+                self.logger.log(f"Error message for selector '{selector}' did not match expected error.")
                 print(f"Error message for selector '{selector}' did not match expected error.")
         
         except Exception:
+            self.logger.log(f"Error message element with selector '{error_selector}' not found for field '{selector}'.")
             print(f"Error message element with selector '{error_selector}' not found for field '{selector}'.")
 
     def check_alert_or_value(self, selector, invalid_value, expected_error):
@@ -51,17 +58,22 @@ class Validator:
             alert_text = alert.text
             alert.accept()
             print(f"Alert shown with message: {alert_text}")
+            self.logger.log(f"Alert shown with message: {alert_text}")
             
             if expected_error and expected_error in alert_text:
+                self.logger.log(f"Field with selector '{selector}' correctly displayed expected error: '{expected_error}'")
                 print(f"Field with selector '{selector}' correctly displayed expected error: '{expected_error}'")
             else:
+                self.logger.log(f"Error message for selector '{selector}' did not match expected error.")
                 print(f"Error message for selector '{selector}' did not match expected error.")
         
         except NoAlertPresentException:
             element = self.driver.find_element(By.CSS_SELECTOR, selector)
             if element.get_attribute("value") == invalid_value:
+                self.logger.log(f"Warning: Field with selector '{selector}' accepted invalid value '{invalid_value}'")
                 print(f"Warning: Field with selector '{selector}' accepted invalid value '{invalid_value}'")
             else:
+                self.logger.log(f"Field with selector '{selector}' correctly rejected invalid value '{invalid_value}'")
                 print(f"Field with selector '{selector}' correctly rejected invalid value '{invalid_value}'")
 
     def generate_invalid_values(self, rules):
