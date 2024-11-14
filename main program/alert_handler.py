@@ -9,6 +9,7 @@ class AlertHandler:
             alert = self.driver.switch_to.alert
             alert_text = alert.text
             alert.accept()
+            self.logger.log(f"Handled alert with message: {alert_text} for field with selector '{selector}'")
             print(f"Handled alert with message: {alert_text} for field with selector '{selector}'")
         except NoAlertPresentException:
             pass
