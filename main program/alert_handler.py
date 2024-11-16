@@ -1,8 +1,10 @@
 from selenium.common.exceptions import NoAlertPresentException
+from logger import Logger  # ایمپورت Logger
 
 class AlertHandler:
     def __init__(self, driver):
         self.driver = driver
+        self.logger = Logger()  # مقداردهی Logger
 
     def handle_alert(self, selector):
         try:

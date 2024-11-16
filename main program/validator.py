@@ -26,13 +26,24 @@ class Validator:
                 if expected_error_selector:
                     self.check_error_message(selector, expected_error_selector, expected_error)
                 else:
-                    self.check_alert_or_value(selector, invalid_value, expected_error)
+                    self.check_invalid_value(selector, invalid_value)
                 
             except UnexpectedAlertPresentException:
-                AlertHandler(self.driver).handle_alert(selector)
+                self.handle_alert(selector)
             except Exception as e:
                 print(f"Error testing invalid value '{invalid_value}' for selector {selector}: {e}")
                 self.logger.log(f"Error testing invalid value '{invalid_value}' for selector {selector}: {e}")
+
+    def handle_alert(self, selector):
+        try:
+            alert = self.driver.switch_to.alert
+            alert_text = alert.text
+            alert.accept()
+            self.logger.log(f"Alert handled for selector '{selector}' with message: {alert_text}")
+            print(f"Alert handled for selector '{selector}' with message: {alert_text}")
+        except NoAlertPresentException:
+            self.logger.log(f"No alert present for selector '{selector}'")
+            print(f"No alert present for selector '{selector}'")
 
     def check_error_message(self, selector, error_selector, expected_error):
         try:
@@ -52,22 +63,8 @@ class Validator:
             self.logger.log(f"Error message element with selector '{error_selector}' not found for field '{selector}'.")
             print(f"Error message element with selector '{error_selector}' not found for field '{selector}'.")
 
-    def check_alert_or_value(self, selector, invalid_value, expected_error):
+    def check_invalid_value(self, selector, invalid_value):
         try:
-            alert = self.driver.switch_to.alert
-            alert_text = alert.text
-            alert.accept()
-            print(f"Alert shown with message: {alert_text}")
-            self.logger.log(f"Alert shown with message: {alert_text}")
-            
-            if expected_error and expected_error in alert_text:
-                self.logger.log(f"Field with selector '{selector}' correctly displayed expected error: '{expected_error}'")
-                print(f"Field with selector '{selector}' correctly displayed expected error: '{expected_error}'")
-            else:
-                self.logger.log(f"Error message for selector '{selector}' did not match expected error.")
-                print(f"Error message for selector '{selector}' did not match expected error.")
-        
-        except NoAlertPresentException:
             element = self.driver.find_element(By.CSS_SELECTOR, selector)
             if element.get_attribute("value") == invalid_value:
                 self.logger.log(f"Warning: Field with selector '{selector}' accepted invalid value '{invalid_value}'")
@@ -75,18 +72,36 @@ class Validator:
             else:
                 self.logger.log(f"Field with selector '{selector}' correctly rejected invalid value '{invalid_value}'")
                 print(f"Field with selector '{selector}' correctly rejected invalid value '{invalid_value}'")
+        
+        except Exception as e:
+            print(f"Error checking invalid value for selector {selector}: {e}")
+            self.logger.log(f"Error checking invalid value for selector {selector}: {e}")
+
+    def generate_rule_based_invalid_values(self, rules):
+        # مقادیر نامعتبر بر اساس قوانین مشخص شده
+        rule_based_invalid_values = []
+
+        if rules:
+            if "max_length" in rules:
+                rule_based_invalid_values.append("a" * (rules["max_length"] + 1))
+
+            if "contains_digits" in rules and not rules["contains_digits"]:
+                rule_based_invalid_values.append("1234")
+
+            if "allowed_characters" in rules:
+                if rules["allowed_characters"] == "^[a-zA-Z]+$":
+                    rule_based_invalid_values.append("!@#$%^&*()")
+
+        return rule_based_invalid_values
+
+    def generate_general_invalid_values(self):
+        # مقادیر نامعتبر عمومی که همیشه باید بررسی شوند
+        general_invalid_values = ["abcdefghij", "!@#$%^&*()", "1234abcd"]
+        return general_invalid_values
 
     def generate_invalid_values(self, rules):
-        invalid_values = []
-        
-        if "max_length" in rules:
-            invalid_values.append("a" * (rules["max_length"] + 1))
-        
-        if "contains_digits" in rules and not rules["contains_digits"]:
-            invalid_values.append("1234")
-        
-        if "allowed_characters" in rules:
-            if rules["allowed_characters"] == "^[a-zA-Z]+$":
-                invalid_values.append("!@#$%^&*()")
-        
+        # ترکیب مقادیر نامعتبر بر اساس قوانین و مقادیر عمومی
+        invalid_values = self.generate_rule_based_invalid_values(rules)
+        invalid_values.extend(self.generate_general_invalid_values())
         return invalid_values
+

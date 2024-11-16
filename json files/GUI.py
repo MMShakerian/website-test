@@ -1,6 +1,10 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
 import json
+import re
+from MongoDBChecker import MongoDBChecker
+
+
 
 def save_data():
     # جمع‌آوری داده‌ها از فیلدها
@@ -13,10 +17,33 @@ def save_data():
     allowed_characters = allowed_characters_entry.get()
     expected_error_selector = expected_error_selector_entry.get()
 
+    db_checker = MongoDBChecker(db_name="combined_project_db5", collection_name="interactive_elements")
+
+    # بررسی پر بودن تمامی فیلدهای ضروری
+    if not action or not selector or not value or not expected_error_selector or not max_length or not invalid_values or not allowed_characters :
+        messagebox.showwarning("Warning", "All fields must be filled out.")
+        return
+
+    # بررسی وجود کاراکتر فارسی در مقادیر
+    if any(re.search(r'[آ-ی]', field) for field in [selector, value, expected_error_selector]):
+        messagebox.showwarning("Warning", "Persian characters are not allowed.")
+        return
+        # بررسی مقادیر در پایگاه داده
+
+    if db_checker.check_values(action, selector):
+        messagebox.showinfo("Database Check", "The combination of action type and selector exists in the database.")
+    else:
+        messagebox.showinfo("Database Check", "The combination of action type and selector does NOT exist in the database.")
+        return
+
     # ساخت دیکشنری برای قوانین (اگر وجود دارند)
     rules = {}
     if max_length:
-        rules["max_length"] = int(max_length)
+        try:
+            rules["max_length"] = int(max_length)
+        except ValueError:
+            messagebox.showwarning("Warning", "Max Length must be an integer.")
+            return
     if contains_digits:
         rules["contains_digits"] = bool(contains_digits)
     if allowed_characters:

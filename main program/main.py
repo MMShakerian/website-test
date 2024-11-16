@@ -13,7 +13,7 @@ if __name__ == "__main__":
     driver = webdriver.Chrome()
     test_runner = TestRunner(driver)
     
-    # اجرای تست برای هر فایل JSON
+    # اجرای تست برای هر فابل JSON
     for json_file in json_files:
         file_path = os.path.join(json_folder, json_file)
         with open(file_path, "r") as file:
